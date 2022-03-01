@@ -1,5 +1,7 @@
 import os
 import zipfile
+
+import numpy as np
 import torch
 import torchvision
 from natsort import natsorted
@@ -7,16 +9,16 @@ from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
 
-# Root directory for the dataset
-data_root = 'data/celeba'
-# Path to folder with the dataset
-dataset_folder = f'{data_root}/img_align_celeba'
 
-# Path to download the dataset to
-download_path = f'{data_root}/img_align_celeba.zip'
+class CustomTensorDataset(Dataset):
+    def __init__(self, data_tensor):
+        self.data_tensor = data_tensor
 
-# with zipfile.ZipFile(download_path, 'r') as ziphandler:
-#     ziphandler.extractall(dataset_folder)
+    def __getitem__(self, index):
+        return self.data_tensor[index]
+
+    def __len__(self):
+        return self.data_tensor.size(0)
 
 
 # Create a custom Dataset class
@@ -50,6 +52,25 @@ class CelebADataset(Dataset):
 
 
 def load_celeba(batch_size):
+    # Root directory for the dataset
+    data_root = '../data/celeba'
+    # Path to folder with the dataset
+    dataset_folder = f'{data_root}/img_align_celeba'
+
+    # Path to download the dataset to
+    download_path = f'{data_root}/img_align_celeba.zip'
+    target_location = r'data_root'
+
+    with zipfile.ZipFile(download_path) as zip_file:
+        for member in zip_file.namelist():
+            if os.path.exists(dataset_folder + r'/' + member) or os.path.isfile(dataset_folder + r'/' + member):
+                break
+            else:
+                zip_file.extract(member, dataset_folder)
+
+    # with zipfile.ZipFile(download_path, 'r') as ziphandler:
+    #     ziphandler.extractall(dataset_folder)
+
     # Load the dataset
     # Path to directory with all the images
     img_folder = f'{dataset_folder}/img_align_celeba'
@@ -68,31 +89,41 @@ def load_celeba(batch_size):
 
     ## Create a dataloader
 
-    train_set, test_set = torch.utils.data.random_split(celeba_dataset, [192599, 10000])
-    # train_set, test_set = torch.utils.data.random_split(celeba_dataset, [10000, 192599])
-    celeba_train = torch.utils.data.DataLoader(train_set,
+    train_set, test_set = torch.utils.data.random_split(celeba_dataset, [10000, 192599])
+    data_loader = torch.utils.data.DataLoader(train_set,
 
-                                               batch_size=batch_size,
-                                               shuffle=True)
-    celeba_test = torch.utils.data.DataLoader(test_set,
                                               batch_size=batch_size,
                                               shuffle=True)
-    return celeba_train, celeba_test
+    return data_loader
 
 
-def load_cifar10(batch_size):
+def load_dsprites(batch_size):
+    root = '../data/dsprites/dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz'
+    if not os.path.exists(root):
+        import subprocess
+        print('Now download dsprites-dataset')
+        subprocess.call(['./download_dsprites.sh'])
+        print('Finished')
+    data = np.load(root, encoding='bytes')
+    data = torch.from_numpy(data['imgs']).unsqueeze(1).float()
+    train_kwargs = {'data_tensor': data}
+    dset = CustomTensorDataset
 
-    # Transformations to be applied to each individual image sample
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.5, 0.5, 0.5],
-                             std=[0.5, 0.5, 0.5])
-    ])
+    train_data = dset(**train_kwargs)
+    train_loader = torch.utils.data.DataLoader(train_data,
+                                               batch_size=batch_size,
+                                               shuffle=True, )
 
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                            download=True, transform=transform)
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                           download=True, transform=transform)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
-                                             shuffle=False)
-    return trainset, testloader
+    data_loader = train_loader
+
+    return data_loader
+
+
+def load_mnist(batch_size):
+    data_loader = torch.utils.data.DataLoader(
+        torchvision.datasets.MNIST('./data',
+                                   transform=torchvision.transforms.ToTensor(),
+                                   download=True),
+        batch_size=batch_size,
+        shuffle=True)
+    return data_loader
