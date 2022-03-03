@@ -18,7 +18,7 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.z_dims=latent_dims
         self.sequential = nn.Sequential(
-            nn.Conv2d(num_of_channels, 32, 4, 2, 1),
+            nn.Conv2d(num_of_channels, 32, 4, 1, 2),
             nn.BatchNorm2d(32),
             nn.ReLU(True),
             nn.Conv2d(32, 32, 4, 2, 1),
@@ -27,15 +27,16 @@ class Encoder(nn.Module):
             nn.Conv2d(32, 64, 4, 2, 1),
             nn.BatchNorm2d(64),
             nn.ReLU(True),
-            nn.Conv2d(64, 64, 4, 2, 1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(True),
-            nn.Conv2d(64, 256, 4, 1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(True),
-            View((-1, 256 * 1 * 1)),
-            nn.Linear(256, 4096),
-            nn.Linear(4096, latent_dims * 2),  
+            # nn.Conv2d(64, 64, 4, 2, 1),
+            # nn.BatchNorm2d(64),
+            # nn.ReLU(True),
+            # nn.Conv2d(64, 256, 4,2, 1),
+            # nn.BatchNorm2d(256),
+            # nn.ReLU(True),
+            View((-1, 64 * 7 * 7)),
+            # Removed FC layer to reduce # of params for faster running
+            # nn.Linear(64, 4096),
+            nn.Linear(64*7*7, latent_dims * 2),
         )
 
     def forward(self, x):
@@ -48,22 +49,22 @@ class Decoder(nn.Module):
     def __init__(self, latent_dims, num_of_channels):
         super(Decoder, self).__init__()
         self.sequential = nn.Sequential(
-            nn.Linear(latent_dims, 256),
-            View((-1, 256, 1, 1)),
+            nn.Linear(latent_dims, 64*7*7),
+            View((-1, 64, 7, 7)),
             nn.ReLU(True),
-            nn.ConvTranspose2d(256, 64, 4),
-            nn.BatchNorm2d(64, 1.e-3),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(64, 64, 4, 2, 1),
+            # nn.ConvTranspose2d(256, 64, 4),
             nn.BatchNorm2d(64, 1.e-3),
             nn.ReLU(True),
             nn.ConvTranspose2d(64, 32, 4, 2, 1),
             nn.BatchNorm2d(32, 1.e-3),
             nn.ReLU(True),
-            nn.ConvTranspose2d(32, 32, 4, 2, 1),
+            nn.ConvTranspose2d(32, 32, 4, 2, 1, 1),
             nn.BatchNorm2d(32, 1.e-3),
             nn.ReLU(True),
-            nn.ConvTranspose2d(32, num_of_channels, 4, 2, 1),
+            # nn.ConvTranspose2d(32, 32, 4, 2, 1),
+            # nn.BatchNorm2d(32, 1.e-3),
+            # nn.ReLU(True),
+            nn.ConvTranspose2d(32, num_of_channels, 4, 1, 2),
         )
 
     def forward(self, z):
@@ -86,4 +87,5 @@ class controlVAE(nn.Module):
     def forward(self, x):
         sequential, mu, log_var = self.encoder(x)
         z = reparametrization_trick(mu, log_var)
-        return self.decoder(z), mu, log_var
+        out = self.decoder(z)
+        return out, mu, log_var
