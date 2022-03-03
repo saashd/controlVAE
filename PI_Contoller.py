@@ -2,15 +2,15 @@ from math import exp
 
 
 def pi_controller(desired_KL, KL, beta_max, beta_min, N, Kp=0.001, Ki=-0.001):
-    I_pi = 0
-    beta = 0
-    for t in range(1, N):
+    I_p0 = 0
+    beta0 = 0
+    for i in range(0, N):
         error = desired_KL - KL
-        P_pi = Kp / (1 + exp(error))
-        if beta_min <= beta <= beta_max:
-            I_pi = I_pi - Ki * error
+        P_pi = Kp / (1.0 + float(exp(error)))
+        if beta_min <= beta0 <= beta_max:
+            I_pi = I_p0 - Ki * error
         else:
-            I_pi = I_pi  # Anti-windup
+            I_pi = I_p0  # Anti-windup
 
         beta = P_pi + I_pi + beta_min
 
@@ -18,4 +18,8 @@ def pi_controller(desired_KL, KL, beta_max, beta_min, N, Kp=0.001, Ki=-0.001):
             beta = beta_max
         if beta < beta_min:
             beta = beta_min
-    return beta
+
+        I_p0 = I_pi
+        beta0 = beta
+
+    return beta0
