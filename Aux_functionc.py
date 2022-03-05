@@ -12,21 +12,6 @@ def imshow(img, title):
     plt.show()
 
 
-def plot_figure(x, y, x_title, y_title, fig_title):
-    fig, ax = plt.subplots()
-    plt.plot(x, y)
-    plt.tick_params(labelsize=15)
-    plt.xlabel(x_title, fontsize=15)
-    plt.ylabel(y_title, fontsize=15)
-
-    ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{}'.format(int(x / 100)) + 'K'))
-    plt.legend(loc='best', prop={'size': 11.5})
-    plt.grid()
-    plt.tight_layout()
-    fig.savefig(fig_title, bbox_inches='tight', dpi=600)
-    plt.show()
-
-
 def plot_output(files, output_type):
     for file_name in files:
         file = open(file_name, 'rb')
