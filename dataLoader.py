@@ -53,9 +53,9 @@ class CelebADataset(Dataset):
 
 def load_celeba(batch_size):
     # Root directory for the dataset
-    data_root = '../data/celeba'
+    data_root = '../data/CelebA'
     # Path to folder with the dataset
-    dataset_folder = f'{data_root}/img_align_celeba'
+    dataset_folder = f'{data_root}/CelebA'
 
     # Path to download the dataset to
     download_path = f'{data_root}/img_align_celeba.zip'
@@ -75,23 +75,22 @@ def load_celeba(batch_size):
     # Path to directory with all the images
     img_folder = f'{dataset_folder}/img_align_celeba'
     # Spatial size of training images, images are resized to this size.
-    image_size = 64
+
+    image_size = 128
     # Transformations to be applied to each individual image sample
-    transform = transforms.Compose([
-        transforms.Resize(image_size),
-        transforms.CenterCrop(image_size),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.5, 0.5, 0.5],
-                             std=[0.5, 0.5, 0.5])
-    ])
+
+    transform = transforms.Compose([transforms.Resize((image_size, image_size)),
+                                    transforms.ToTensor()])
     # Load the dataset from file and apply transformations
     celeba_dataset = CelebADataset(img_folder, transform)
 
     ## Create a dataloader
-    train_set, test_set = torch.utils.data.random_split(celeba_dataset, [20000, 182599])
+    train_set, test_set = torch.utils.data.random_split(celeba_dataset, [2000, 200599])
     data_loader = torch.utils.data.DataLoader(train_set,
                                               batch_size=batch_size,
-                                              shuffle=False)
+                                              num_workers=4,
+                                              shuffle=True,
+                                              drop_last=True)
     return data_loader
 
 
