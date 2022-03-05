@@ -20,12 +20,12 @@ def plot_output(files, output_type):
         x = [i for i in range(len(object_file[output_type]))]
         y = object_file[output_type]
         from scipy.ndimage.filters import gaussian_filter1d
-        ysmoothed = gaussian_filter1d(y, sigma=2)
+        ysmoothed = gaussian_filter1d(y, sigma=5)
         plt.plot(x, ysmoothed, label=file_name)
 
 
 def plot_figure(files, output_type):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 10))
     plot_output(files, output_type)
     plt.tick_params(labelsize=15)
     plt.xlabel('Training Steps', fontsize=15)
@@ -33,10 +33,11 @@ def plot_figure(files, output_type):
         title = 'KL Divergence'
         limit = [0, 300]
         plt.axhline(y=170, color='black')
+        plt.axhline(y=180, color='black')
         plt.axhline(y=200, color='black')
     elif output_type == 'recon_loss_list':
         title = 'Reconstruction Loss'
-        limit = [0, 4000]
+        limit = [0, 1000]
     plt.ylabel(title, fontsize=15)
     plt.ylim(limit)
     plt.xlim(0, 6000)
