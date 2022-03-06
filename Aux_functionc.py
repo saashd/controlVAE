@@ -20,7 +20,7 @@ def plot_output(files, output_type):
         x = [i for i in range(len(object_file[output_type]))]
         y = object_file[output_type]
         from scipy.ndimage.filters import gaussian_filter1d
-        ysmoothed = gaussian_filter1d(y, sigma=5)
+        ysmoothed = gaussian_filter1d(y, sigma=2)
         plt.plot(x, ysmoothed, label=file_name)
 
 
@@ -37,7 +37,7 @@ def plot_figure(files, output_type):
         plt.axhline(y=200, color='black')
     elif output_type == 'recon_loss_list':
         title = 'Reconstruction Loss'
-        limit = [0, 1000]
+        limit = [0, 4000]
     plt.ylabel(title, fontsize=15)
     plt.ylim(limit)
     plt.xlim(0, 6000)
