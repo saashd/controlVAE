@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.utils
-import torch.distributions
+from torch.autograd import Variable
 
 
 class View(nn.Module):
@@ -16,9 +15,9 @@ class View(nn.Module):
 class Encoder(nn.Module):
     def __init__(self, latent_dims, num_of_channels):
         super(Encoder, self).__init__()
-        self.z_dims=latent_dims
+        self.z_dims = latent_dims
         self.sequential = nn.Sequential(
-            nn.Conv2d(num_of_channels, 32, 4, 1, 2),
+            nn.Conv2d(num_of_channels, 32, 4, 2, 1),
             nn.BatchNorm2d(32),
             nn.ReLU(True),
             nn.Conv2d(32, 32, 4, 2, 1),
@@ -27,16 +26,14 @@ class Encoder(nn.Module):
             nn.Conv2d(32, 64, 4, 2, 1),
             nn.BatchNorm2d(64),
             nn.ReLU(True),
-            # nn.Conv2d(64, 64, 4, 2, 1),
-            # nn.BatchNorm2d(64),
-            # nn.ReLU(True),
-            # nn.Conv2d(64, 256, 4,2, 1),
-            # nn.BatchNorm2d(256),
-            # nn.ReLU(True),
-            View((-1, 64 * 7 * 7)),
-            # Removed FC layer to reduce # of params for faster running
-            # nn.Linear(64, 4096),
-            nn.Linear(64*7*7, latent_dims * 2),
+            nn.Conv2d(64, 64, 4, 2, 1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(True),
+            nn.Conv2d(64, 256, 4, 2, 1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(True),
+            View((-1, 256 * 4 * 4)),
+            nn.Linear(256 * 4 * 4, latent_dims * 2),
         )
 
     def forward(self, x):
@@ -49,22 +46,22 @@ class Decoder(nn.Module):
     def __init__(self, latent_dims, num_of_channels):
         super(Decoder, self).__init__()
         self.sequential = nn.Sequential(
-            nn.Linear(latent_dims, 64*7*7),
-            View((-1, 64, 7, 7)),
+            nn.Linear(latent_dims, 256 * 4 * 4),
+            View((-1, 256, 4, 4)),
             nn.ReLU(True),
-            # nn.ConvTranspose2d(256, 64, 4),
-            nn.BatchNorm2d(64, 1.e-3),
+            nn.ConvTranspose2d(256, 64, 4, 2, 1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(64, 64, 4, 2, 1),
+            nn.BatchNorm2d(64),
             nn.ReLU(True),
             nn.ConvTranspose2d(64, 32, 4, 2, 1),
-            nn.BatchNorm2d(32, 1.e-3),
+            nn.BatchNorm2d(32),
             nn.ReLU(True),
-            nn.ConvTranspose2d(32, 32, 4, 2, 1, 1),
-            nn.BatchNorm2d(32, 1.e-3),
+            nn.ConvTranspose2d(32, 32, 4, 2, 1),
+            nn.BatchNorm2d(32),
             nn.ReLU(True),
-            # nn.ConvTranspose2d(32, 32, 4, 2, 1),
-            # nn.BatchNorm2d(32, 1.e-3),
-            # nn.ReLU(True),
-            nn.ConvTranspose2d(32, num_of_channels, 4, 1, 2),
+            nn.ConvTranspose2d(32, num_of_channels, 4, 2, 1),
         )
 
     def forward(self, z):
@@ -74,8 +71,9 @@ class Decoder(nn.Module):
 
 def reparametrization_trick(mu, log_var):
     # Using reparameterization trick to sample from a gaussian
-    eps = torch.randn_like(log_var)
-    return mu + torch.exp(log_var / 2) * eps
+    std = torch.exp(log_var / 2)
+    eps = Variable(std.data.new(std.size()).normal_())
+    return mu + std * eps
 
 
 class controlVAE(nn.Module):
