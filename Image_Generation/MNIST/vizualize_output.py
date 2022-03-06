@@ -1,4 +1,4 @@
-from Aux_functionc import plot_figure
+from Aux_functions import plot_figure
 
 
 def main():
