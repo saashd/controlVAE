@@ -2,8 +2,8 @@
 
 This repository contains reproduction of main results that displayed in \[[arxiv](https://arxiv.org/pdf/2011.01754v1.pdf)\] as a part of ML course.
 
-    ###  ControlVAE: Tuning, Analytical Properties, and Performance Analysis  
-                by Huajie Shao∗, Zhisheng Xiao∗, Shuochao Yao, Dachun Sun, Aston Zhang, Shengzhong Liu, Tarek Abdelzaher, Fellow, ACM 
+####  ControlVAE: Tuning, Analytical Properties, and Performance Analysis  
+ by Huajie Shao∗, Zhisheng Xiao∗, Shuochao Yao, Dachun Sun, Aston Zhang, Shengzhong Liu, Tarek Abdelzaher, Fellow, ACM 
 
 ## Datasets
 
