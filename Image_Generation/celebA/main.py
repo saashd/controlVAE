@@ -4,8 +4,8 @@ import torch.utils
 import torch.distributions
 import torch.nn.functional as F
 
-from Image_Generation_celebA.controlVAE import controlVAE
-from PI_Contoller import PI_Controller
+from Image_Generation.PI_Contoller import PI_Controller
+from Image_Generation.controlVAE import controlVAE
 from dataLoader import load_celeba
 
 torch.manual_seed(0)
