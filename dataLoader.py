@@ -1,7 +1,5 @@
 import os
 import zipfile
-
-import numpy as np
 import torch
 import torchvision
 from natsort import natsorted
@@ -90,31 +88,7 @@ def load_celeba(batch_size):
     return data_loader
 
 
-def load_dsprites(batch_size):
-    root = '../data/dsprites/dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz'
-    if not os.path.exists(root):
-        import subprocess
-        print('Now download dsprites-dataset')
-        subprocess.call(['./download_dsprites.sh'])
-        print('Finished')
-    data = np.load(root, encoding='bytes')
-    data = torch.from_numpy(data['imgs']).unsqueeze(1).float()
-    train_kwargs = {'data_tensor': data}
-    dset = CustomTensorDataset
-    train_data = dset(**train_kwargs)
-
-    # Create a dataloader
-    train_loader = torch.utils.data.DataLoader(train_data,
-                                               batch_size=batch_size,
-                                               shuffle=True, )
-
-    data_loader = train_loader
-
-    return data_loader
-
-
-def load_mnist(batch_size):
-    image_size = 128
+def load_mnist(batch_size, image_size=128):
     # Transformations to be applied to each individual image sample
     transform = transforms.Compose([transforms.Resize((image_size, image_size)),
                                     transforms.ToTensor()])
