@@ -6,11 +6,25 @@ This repository contains reproduction of main results that displayed in \[[arxiv
  by Huajie Shao∗, Zhisheng Xiao∗, Shuochao Yao, Dachun Sun, Aston Zhang, Shengzhong Liu, Tarek Abdelzaher, Fellow, ACM 
 
 ## Datasets
-
-#### celebA
-Before running the code:
-1. Download .zip file from here \[[celebA](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)\]
-2. Store it like this: 
-![files diagram](https://user-images.githubusercontent.com/52024657/157478656-c8518bdc-d419-48d1-bfe1-d45fd33ffaf9.png)
-
 #### MNIST
+ No need to upload data files
+ 
+#### celebA
+Before running the code, download .zip file from here \[[celebA](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)\].
+
+
+#### dSprites
+Before running the code, download full datased downloaded from the original repo. \[[dSrites](https://github.com/deepmind/dsprites-dataset)\].
+Subset of 2000 random dSprites samples downloaded from the Neuromatch Academy tutorial  \[[Colab tutorial](https://colab.research.google.com/github/NeuromatchAcademy/course-content-dl/blob/main/tutorials/W3D1_UnsupervisedAndSelfSupervisedLearning/student/W3D1_Tutorial1.ipynb)\].
+
+
+Store files  like this:
+ 
+            data
+                ↳ celebA
+                    ↳ img_align_celeba.zip
+                ↳ dSprites
+                    ↳ dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz
+                    ↳ dsprites_subset.npz
+            Disentangling
+            Image Generation 
