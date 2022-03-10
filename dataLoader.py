@@ -1,22 +1,13 @@
 import os
 import zipfile
+import random
+import numpy as np
 import torch
 import torchvision
 from natsort import natsorted
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
-
-
-class CustomTensorDataset(Dataset):
-    def __init__(self, data_tensor):
-        self.data_tensor = data_tensor
-
-    def __getitem__(self, index):
-        return self.data_tensor[index]
-
-    def __len__(self):
-        return self.data_tensor.size(0)
 
 
 # Create a custom Dataset class
@@ -49,9 +40,9 @@ class CelebADataset(Dataset):
         return img
 
 
-def load_celeba(batch_size):
+def load_celeba(batch_size, root='../../data/CelebA'):
     # Root directory for the dataset
-    data_root = '../../data/CelebA'
+    data_root = root
     # Path to folder with the dataset
     dataset_folder = f'{data_root}/CelebA'
 
@@ -103,4 +94,34 @@ def load_mnist(batch_size, image_size=128):
         train_set,
         batch_size=batch_size,
         shuffle=True)
+    return data_loader
+
+
+class CustomTensorDataset(Dataset):
+    def __init__(self, root, size):
+        self.size = size
+        dataset_zip = np.load(root, encoding='latin1',
+                              allow_pickle=True)
+        idx = random.sample(range(1, len(dataset_zip['imgs'])), self.size)
+        self.imgs = dataset_zip['imgs'][idx]
+        self.latents_values = dataset_zip['latents_values'][idx]
+        self.latents_classes = dataset_zip['latents_classes'][idx]
+
+    def __getitem__(self, index):
+        imgs = torch.tensor(self.imgs[index]).unsqueeze(0).float()
+        latents_values = torch.tensor(self.latents_values[index]).unsqueeze(0)
+        return imgs, latents_values
+
+    def __len__(self):
+        return self.size
+
+
+def load_dSprites(batch_size=64, root='../data/dSprites/dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz'):
+    # Load dataset
+    ds = CustomTensorDataset(root=root, size=10000)
+    data_loader = torch.utils.data.DataLoader(ds,
+                                              batch_size=batch_size,
+                                              num_workers=4,
+                                              shuffle=True,
+                                              drop_last=True)
     return data_loader
