@@ -29,10 +29,7 @@ class Encoder(nn.Module):
             nn.Conv2d(64, 256, 4, 1),
             nn.ReLU(True),
             View((-1, 256 * 1 * 1)),
-            # Removed FC layer to reduce # of params for faster running
-            # nn.Linear(256, 4096),
-            nn.Linear(256, latent_dims * 2),
-        )
+            nn.Linear(256, latent_dims * 2))
 
     def forward(self, x):
         sequential = self.sequential(x)
@@ -55,8 +52,7 @@ class Decoder(nn.Module):
             nn.ReLU(True),
             nn.ConvTranspose2d(32, 32, 4, 2, 1),
             nn.ReLU(True),
-            nn.ConvTranspose2d(32, num_of_channels, 4, 2, 1),
-        )
+            nn.ConvTranspose2d(32, num_of_channels, 4, 2, 1) )
 
     def forward(self, z):
         x_hat = self.sequential(z)
