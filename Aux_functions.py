@@ -56,6 +56,9 @@ def plot_figure(files, output_type, data='celebA'):
             limit = [0, 2000]
         else:
             limit = [0, 1000]
+    elif output_type == 'beta_list':
+        title = 'Beta Hyperparameter'
+        limit = [0, 100]
     plt.ylabel(title, fontsize=15)
     plt.ylim(limit)
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{}'.format(int(x))))
