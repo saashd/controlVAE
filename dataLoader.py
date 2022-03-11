@@ -102,7 +102,7 @@ class CustomTensorDataset(Dataset):
         self.size = size
         dataset_zip = np.load(root, encoding='latin1',
                               allow_pickle=True)
-        idx = random.sample(range(1, len(dataset_zip['imgs'])), self.size)
+        idx = random.sample(range(0, len(dataset_zip['imgs'])), self.size)
         self.imgs = dataset_zip['imgs'][idx]
         self.latents_values = dataset_zip['latents_values'][idx]
         self.latents_classes = dataset_zip['latents_classes'][idx]
@@ -118,10 +118,17 @@ class CustomTensorDataset(Dataset):
 
 def load_dSprites(batch_size=64, root='../data/dSprites/dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz'):
     # Load dataset
-    ds = CustomTensorDataset(root=root, size=10000)
+    ds = CustomTensorDataset(root=root, size=20000)
     data_loader = torch.utils.data.DataLoader(ds,
                                               batch_size=batch_size,
                                               num_workers=4,
                                               shuffle=True,
                                               drop_last=True)
     return data_loader
+
+
+def main():
+    train_data = load_dSprites(15000,'./data/dSprites/dsprites_subset.npz')
+
+if __name__ == '__main__':
+    main()

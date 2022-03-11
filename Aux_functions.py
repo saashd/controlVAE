@@ -103,7 +103,7 @@ def display_MNIST(images, title):
     plt.show()
 
 
-def interpolate_gif(autoencoder, filename, x_1, x_2, n=100):
+def interpolate_gif(autoencoder, filename, x_1, x_2, data='MNIST', n=100):
     _, mu, log_var = autoencoder.encoder(x_1.unsqueeze(0))
     z_1 = reparametrization_trick(mu, log_var)
     _, mu, log_var = autoencoder.encoder(x_2.unsqueeze(0))
@@ -113,8 +113,10 @@ def interpolate_gif(autoencoder, filename, x_1, x_2, n=100):
 
     interpolate_list = autoencoder.decoder(z)
     interpolate_list = interpolate_list.to('cpu').detach().numpy() * 255
-
-    images_list = [Image.fromarray(img.reshape(128, 128)).resize((256, 256)) for img in interpolate_list]
+    if data == 'MNIST':
+        images_list = [Image.fromarray(img.reshape(128, 128)).resize((256, 256)) for img in interpolate_list]
+    else:
+        images_list = [Image.fromarray(img.reshape(64, 64)).resize((256, 256)) for img in interpolate_list]
     images_list = images_list + images_list[::-1]  # loop back beginning
 
     images_list[0].save(
