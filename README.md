@@ -14,11 +14,12 @@ Before running the code, download .zip file from here \[[celebA](http://mmlab.ie
 
 
 #### dSprites
-Before running the code, download full datased downloaded from the original repo. \[[dSrites](https://github.com/deepmind/dsprites-dataset)\].
+Before running the code, download full datased downloaded from the original repo. \[[dSrites](https://github.com/deepmind/dsprites-dataset)\].<br>
 Subset of 2000 random dSprites samples downloaded from the Neuromatch Academy tutorial  \[[Colab tutorial](https://colab.research.google.com/github/NeuromatchAcademy/course-content-dl/blob/main/tutorials/W3D1_UnsupervisedAndSelfSupervisedLearning/student/W3D1_Tutorial1.ipynb)\].
 
 
-Store files  like this:
+Store files as described below in `data` folder.<br>
+Run `main.py` files to train the models.
  
             data
                 ↳ celebA
@@ -27,4 +28,9 @@ Store files  like this:
                     ↳ dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz
                     ↳ dsprites_subset.npz
             Disentangling
+                ↳ main.py
             Image Generation 
+                ↳ celebA
+                    ↳ main.py
+                ↳ MNIST
+                    ↳ main.py
