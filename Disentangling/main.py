@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 from Disentangling.PI_Contoller import PI_Controller
 from Disentangling.controlVAE import controlVAE
-from dataLoader import load_mnist
+from dataLoader import load_dSprites
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 torch.manual_seed(0)
@@ -77,8 +77,8 @@ def get_train_results(batch_size, kl_set_point, model):
     step_val = 0.15  # alpha or s
     vae = controlVAE(10, 1).to(device)
     # vae.load_state_dict(torch.load('controlVAE_16_model'))
-    train_data = load_mnist(batch_size=batch_size, image_size=64)
-    epochs = 2000
+    train_data = load_dSprites(batch_size=batch_size)
+    epochs = 600
 
     vae, x_hat, loss_list, recon_loss_list, kl_list, beta_list = \
         train(vae=vae, data_loader=train_data, desired_KL=kl_set_point, vae_type=model, epochs=epochs, period=period,

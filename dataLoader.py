@@ -108,8 +108,8 @@ class CustomTensorDataset(Dataset):
         self.latents_classes = dataset_zip['latents_classes'][idx]
 
     def __getitem__(self, index):
-        imgs = torch.tensor(self.imgs[index]).unsqueeze(0).float()
         latents_values = torch.tensor(self.latents_values[index]).unsqueeze(0)
+        imgs = torch.tensor(self.imgs[index]).unsqueeze(0).float()
         return imgs, latents_values
 
     def __len__(self):
@@ -125,10 +125,3 @@ def load_dSprites(batch_size=64, root='../data/dSprites/dsprites_ndarray_co1sh3s
                                               shuffle=True,
                                               drop_last=True)
     return data_loader
-
-
-def main():
-    train_data = load_dSprites(15000,'./data/dSprites/dsprites_subset.npz')
-
-if __name__ == '__main__':
-    main()
