@@ -34,5 +34,5 @@ Run `main.py` files to train the models.
                     ↳ main.py
                 ↳ MNIST
                     ↳ main.py
-   ![Anurag's github stats](https://github-readme-stats.vercel.app/api?username=saashd)
+ 
    
